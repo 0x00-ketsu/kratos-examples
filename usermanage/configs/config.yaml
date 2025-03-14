@@ -1,0 +1,34 @@
+metadata:
+  name: kratos-example
+  env: DEV
+log:
+  file_path: /tmp/logs/kratos-example.log
+  level: 0 # 0: debug, 1: info, 2: warn, 3: error
+  max_size: 100 # MB
+  max_backups: 7
+  max_age: 15
+  compress: false
+server:
+  # WARN: set to `false` in production
+  debug: true
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 1s
+  grpc:
+    addr: 0.0.0.0:9000
+    timeout: 1s
+jwt:
+  secret: inPRpgWvweLuK8cv5kIaN5#GIzCllcWa
+  expire_seconds: 7200
+data:
+  database:
+    driver: 1 # 1: mysql, 2: postgres
+    name: kratos_example
+    dsn: root:root@tcp(mysql:3306)/kratos_example?charset=utf8mb4&parseTime=True&loc=Local
+  redis:
+    addrs:
+      - redis:6379
+    db: 0
+    dial_timeout: 1s
+    read_timeout: 1s
+    write_timeout: 1s

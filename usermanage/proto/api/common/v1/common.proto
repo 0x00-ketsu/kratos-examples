@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package common.v1;
+
+import "validate/validate.proto";
+
+option go_package = "usermanage/gen/proto/api/common/v1;commonv1";
+
+
+// PaginationResponse is the response for pagination
+message PageResponse {
+  int32 page = 1;
+  int32 page_size = 2;
+  int64 total_count = 3;
+}

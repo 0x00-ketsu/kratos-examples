@@ -1,0 +1,34 @@
+version: v2
+managed:
+  enabled: true
+  disable:
+    - file_option: go_package
+      module: buf.build/googleapis/googleapis
+    - file_option: go_package
+      module: buf.build/bufbuild/protovalidate
+    - file_option: go_package
+      module: buf.build/grpc-ecosystem/grpc-gateway
+plugins:
+  - remote: buf.build/protocolbuffers/go:v1.36.5
+    out: gen
+    opt:
+      - paths=source_relative
+  - remote: buf.build/grpc/go:v1.5.1
+    out: gen
+    opt:
+      - paths=source_relative
+  - local: protoc-gen-validate
+    out: gen
+    opt:
+      - lang=go
+      - paths=source_relative
+  - local: protoc-gen-go-http
+    out: gen
+    opt:
+      - paths=source_relative
+  - local: protoc-gen-openapi
+    out: .
+    strategy: all
+    opt:
+      - fq_schema_naming=true
+      - default_response=false

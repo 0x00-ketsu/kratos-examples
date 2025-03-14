@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package conf;
+
+import "google/protobuf/duration.proto";
+import "validate/validate.proto";
+
+option go_package = "usermanage/gen/proto/conf;conf";
+
+enum DatabaseDriver {
+  DATABASE_DRIVER_UNSPECIFIED = 0;
+  DATABASE_DRIVER_MYSQL = 1;
+  DATABASE_DRIVER_POSTGRES = 2;
+}
+
+// protolint:disable ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH
+enum LogLevel {
+  LOG_LEVEL_DEBUG = 0; // Mapping to -1
+  LOG_LEVEL_INFO = 1; // Mapping to 0
+  LOG_LEVEL_WARN = 2; // Mapping to 1
+  LOG_LEVEL_ERROR = 3; // Mapping to 2
+}
+// protolint:enable ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH
+
+message Bootstrap {
+  Metadata metadata = 1 [(validate.rules).message.required = true];
+  Server server = 2 [(validate.rules).message.required = true];
+  Data data = 3 [(validate.rules).message.required = true];
+  Log log = 4 [(validate.rules).message.required = true];
+  Jwt jwt = 5 [(validate.rules).message.required = true];
+}
+
+message Metadata {
+  // protolint:disable ENUM_FIELD_NAMES_PREFIX
+  enum Environment {
+    UNSPECIFIED = 0;
+    DEV = 1;
+    STAG = 2;
+    PROD = 3;
+  }
+  // protolint:enable ENUM_FIELD_NAMES_PREFIX
+  string name = 1;
+  Environment env = 2;
+}
+
+message Log {
+  string file_path = 1;
+  LogLevel level = 2;
+  int32 max_size  = 3; // Unit: MB
+  int32 max_backups = 4;
+  int32 max_age = 5;
+  bool compress = 6;
+}
+
+message Jwt {
+  string secret = 1;
+  int32 expire_seconds = 2; // Unit: second
+}
+
+message Server {
+  message HTTP {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  message GRPC {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  bool debug = 1;
+  HTTP http = 2;
+  GRPC grpc = 3;
+}
+
+message Data {
+  message Database {
+    DatabaseDriver driver = 1 [(validate.rules).enum = {defined_only : true, not_in: [0]}];
+    string name = 2 [(validate.rules).string = {min_len: 1}];
+    string dsn = 3;
+  }
+  message Redis {
+    string network = 1;
+    repeated string addrs = 2;
+    string password = 3;
+    int32 db = 4;
+    google.protobuf.Duration dial_timeout = 5;
+    google.protobuf.Duration read_timeout = 6;
+    google.protobuf.Duration write_timeout = 7;
+  }
+  Database database = 1;
+  Redis redis = 2;
+}

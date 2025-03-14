@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package auth.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "proto/api/user/v1/user.proto";
+import "validate/validate.proto";
+
+option go_package = "usermanage/gen/proto/api/auth/v1;authv1";
+
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/login"
+      body: "*"
+    };
+  }
+
+  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/auth/logout"
+    };
+  }
+
+  rpc GetUserInfo(UserInfoRequest) returns (UserInfoResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/userinfo"
+      body: "*"
+    };
+  }
+
+  rpc ChangePassword(ChangePasswordRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/auth/change-password"
+      body: "*"
+    };
+  }
+}
+
+message LoginRequest {
+  string username = 1 [(validate.rules).string = {min_len: 1}];
+  string password = 2 [(validate.rules).string = {min_len: 8}];
+}
+
+message LoginResponse {
+  string token = 1;
+  google.protobuf.Timestamp expires_at = 2;
+}
+
+message UserInfoRequest {
+  string token = 1 [(validate.rules).string = {min_len: 1}];
+}
+
+message UserInfoResponse {
+  string id = 1;
+  string username = 2;
+  user.v1.UserRole role = 3;
+  user.v1.UserStatus status = 4;
+  string creator = 5;
+  string updated_by = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message ChangePasswordRequest {
+  string old_password = 1 [(validate.rules).string = {min_len: 8, max_len: 32}];
+  string new_password = 2 [(validate.rules).string = {min_len: 8, max_len: 32}];
+}

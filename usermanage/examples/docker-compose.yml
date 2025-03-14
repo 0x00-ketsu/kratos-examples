@@ -1,0 +1,42 @@
+services:
+  mysql:
+    image: mysql:8.0.40
+    container_name: mysql-kratos
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=kratos_example
+    networks:
+      - kratos
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 3
+      timeout: 5s
+
+  redis:
+    image: redis:7.2.6
+    container_name: redis-kratos
+    command: ["redis-server"]
+    networks:
+      - kratos
+
+  usermanage:
+    image: usermanage:latest
+    container_name: kratos_usermanage
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - kratos
+
+networks:
+  kratos:
+    driver: bridge

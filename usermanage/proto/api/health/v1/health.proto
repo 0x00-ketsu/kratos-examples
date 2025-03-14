@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package health.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "grpc/health/v1/health.proto";
+
+option go_package = "usermanage/gen/proto/api/health/v1;healthv1";
+
+service HealthService {
+  rpc Probe(google.protobuf.Empty) returns (ProbeResponse) {
+    option (google.api.http) = {
+      get: "/v1/health/liveness"
+    };
+  }
+
+  rpc Check(grpc.health.v1.HealthCheckRequest) returns (grpc.health.v1.HealthCheckResponse) {
+    option (google.api.http) = {
+      get: "/v1/health/readiness"
+    };
+  }
+}
+
+message ProbeResponse {
+  string message = 1;
+}

@@ -1,0 +1,418 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ""
+    version: 0.0.1
+paths:
+    /v1/admin/users:
+        get:
+            tags:
+                - UserService
+            operationId: UserService_ListUsers
+            parameters:
+                - name: page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: sortBy
+                  in: query
+                  schema:
+                    type: string
+                - name: sortOrder
+                  in: query
+                  schema:
+                    type: string
+                - name: username
+                  in: query
+                  schema:
+                    type: string
+                - name: status
+                  in: query
+                  schema:
+                    type: integer
+                    format: enum
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/user.v1.UserListResponse'
+        post:
+            tags:
+                - UserService
+            operationId: UserService_CreateUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/user.v1.UserCreateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/user.v1.UserResponse'
+    /v1/admin/users/{id}:
+        get:
+            tags:
+                - UserService
+            operationId: UserService_GetUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/user.v1.UserResponse'
+        put:
+            tags:
+                - UserService
+            description: ReplaceUser performs a full replacement of a user resource.
+            operationId: UserService_ReplaceUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/user.v1.UserReplaceRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/user.v1.UserResponse'
+        delete:
+            tags:
+                - UserService
+            operationId: UserService_DeleteUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        patch:
+            tags:
+                - UserService
+            description: UpdateUser performs a partial update on a user resource using the provided field mask.
+            operationId: UserService_UpdateUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/user.v1.UserUpdateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/user.v1.UserResponse'
+    /v1/admin/users/{id}/reset-password:
+        post:
+            tags:
+                - UserService
+            operationId: UserService_ResetUserPassword
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/user.v1.UserPasswordResetRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /v1/auth/change-password:
+        post:
+            tags:
+                - AuthService
+            operationId: AuthService_ChangePassword
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/auth.v1.ChangePasswordRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /v1/auth/login:
+        post:
+            tags:
+                - AuthService
+            operationId: AuthService_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/auth.v1.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/auth.v1.LoginResponse'
+    /v1/auth/logout:
+        post:
+            tags:
+                - AuthService
+            operationId: AuthService_Logout
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /v1/auth/userinfo:
+        post:
+            tags:
+                - AuthService
+            operationId: AuthService_GetUserInfo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/auth.v1.UserInfoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/auth.v1.UserInfoResponse'
+    /v1/health/liveness:
+        get:
+            tags:
+                - HealthService
+            operationId: HealthService_Probe
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/health.v1.ProbeResponse'
+    /v1/health/readiness:
+        get:
+            tags:
+                - HealthService
+            operationId: HealthService_Check
+            parameters:
+                - name: service
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/grpc.health.v1.HealthCheckResponse'
+components:
+    schemas:
+        auth.v1.ChangePasswordRequest:
+            type: object
+            properties:
+                oldPassword:
+                    type: string
+                newPassword:
+                    type: string
+        auth.v1.LoginRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+        auth.v1.LoginResponse:
+            type: object
+            properties:
+                token:
+                    type: string
+                expiresAt:
+                    type: string
+                    format: date-time
+        auth.v1.UserInfoRequest:
+            type: object
+            properties:
+                token:
+                    type: string
+        auth.v1.UserInfoResponse:
+            type: object
+            properties:
+                id:
+                    type: string
+                username:
+                    type: string
+                role:
+                    type: integer
+                    format: enum
+                status:
+                    type: integer
+                    format: enum
+                creator:
+                    type: string
+                updatedBy:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+        common.v1.PageResponse:
+            type: object
+            properties:
+                page:
+                    type: integer
+                    format: int32
+                pageSize:
+                    type: integer
+                    format: int32
+                totalCount:
+                    type: string
+            description: PaginationResponse is the response for pagination
+        grpc.health.v1.HealthCheckResponse:
+            type: object
+            properties:
+                status:
+                    type: integer
+                    format: enum
+        health.v1.ProbeResponse:
+            type: object
+            properties:
+                message:
+                    type: string
+        user.v1.UserCreateRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                role:
+                    type: integer
+                    format: enum
+                status:
+                    type: integer
+                    format: enum
+        user.v1.UserListResponse:
+            type: object
+            properties:
+                pagination:
+                    $ref: '#/components/schemas/common.v1.PageResponse'
+                data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/user.v1.UserPublic'
+        user.v1.UserPasswordResetRequest:
+            type: object
+            properties:
+                id:
+                    type: string
+                newPassword:
+                    type: string
+        user.v1.UserPublic:
+            type: object
+            properties:
+                id:
+                    type: string
+                username:
+                    type: string
+                role:
+                    type: integer
+                    format: enum
+                status:
+                    type: integer
+                    format: enum
+                creator:
+                    type: string
+                updatedBy:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+        user.v1.UserReplaceRequest:
+            type: object
+            properties:
+                id:
+                    type: string
+                username:
+                    type: string
+                role:
+                    type: integer
+                    format: enum
+                status:
+                    type: integer
+                    format: enum
+        user.v1.UserResponse:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/user.v1.UserPublic'
+        user.v1.UserUpdateRequest:
+            type: object
+            properties:
+                id:
+                    type: string
+                username:
+                    type: string
+                role:
+                    type: integer
+                    format: enum
+                status:
+                    type: integer
+                    format: enum
+                updateMask:
+                    type: string
+                    format: field-mask
+tags:
+    - name: AuthService
+    - name: HealthService
+    - name: UserService
