@@ -70,8 +70,6 @@ MODULE_PREFIX=usermanage make build-image
 - GRPC server listens on `9000`
 
 ```bash
-cd usermanage
-
 # Build image
 MODULE_PREFIX=usermanage make build-image
 
