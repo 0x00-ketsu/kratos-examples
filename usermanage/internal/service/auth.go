@@ -32,10 +32,7 @@ func (s *AuthService) Login(ctx context.Context, req *authv1.LoginRequest) (*aut
 	logger := s.log.WithContext(ctx)
 	md := map[string]string{"traceId": tracingx.GetTraceID(ctx)}
 
-	if err := req.Validate(); err != nil {
-		logger.Errorw("msg", "invalid request", "error", err)
-		err = errors.BadRequest("INVALID_REQUEST", "Invalid request").
-			WithMetadata(md)
+	if err := s.validate(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -82,10 +79,7 @@ func (s *AuthService) GetUserInfo(ctx context.Context, req *authv1.UserInfoReque
 	logger := s.log.WithContext(ctx)
 	md := map[string]string{"traceId": tracingx.GetTraceID(ctx)}
 
-	if err := req.Validate(); err != nil {
-		logger.Errorw("msg", "invalid request", "error", err)
-		err = errors.BadRequest("INVALID_REQUEST", "Invalid request").
-			WithMetadata(md)
+	if err := s.validate(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -116,10 +110,7 @@ func (s *AuthService) ChangePassword(ctx context.Context, req *authv1.ChangePass
 	logger := s.log.WithContext(ctx)
 	md := map[string]string{"traceId": tracingx.GetTraceID(ctx)}
 
-	if err := req.Validate(); err != nil {
-		logger.Errorw("msg", "invalid request", "error", err)
-		err = errors.BadRequest("INVALID_REQUEST", "Invalid request").
-			WithMetadata(md)
+	if err := s.validate(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -141,4 +132,17 @@ func (s *AuthService) ChangePassword(ctx context.Context, req *authv1.ChangePass
 	logger.Infow("msg", "password changed successfully", "user", username)
 
 	return &emptypb.Empty{}, nil
+}
+
+// A helper method to validate a request.
+func (s *AuthService) validate(ctx context.Context, req interface{ Validate() error }) error {
+	logger := s.log.WithContext(ctx)
+	md := map[string]string{"traceId": tracingx.GetTraceID(ctx)}
+
+	if err := req.Validate(); err != nil {
+		logger.Errorw("msg", "invalid request", "error", err)
+		return errors.BadRequest("INVALID_REQUEST", "Invalid request").
+			WithMetadata(md)
+	}
+	return nil
 }
