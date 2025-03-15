@@ -73,7 +73,7 @@ MODULE_PREFIX=usermanage make build-image
 cd usermanage
 
 # Build image
-make build-image
+MODULE_PREFIX=usermanage make build-image
 
 # Run the application
 docker compose -f examples/docker-compose.yml up
