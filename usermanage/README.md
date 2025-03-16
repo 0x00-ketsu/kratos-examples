@@ -71,7 +71,7 @@ To output the telemetry to console, in the `config.yaml` file, set `telemetry.ou
 
 ### Jaeger
 
-Start the `jaeger` with docker.
+Send the telemetry to `jaeger`.
 
 ```bash
 docker run -d \
@@ -82,6 +82,48 @@ docker run -d \
 ```
 
 Visit the `jaeger` dashboard at `http://localhost:16686`.
+
+### OTLP Collector
+
+> **NOTE**
+>
+> Current application is sending telemetry to `otlp` via `grpc`.
+
+Send the telemetry to `otlp-collector`, then to `jaeger`.
+
+1. receiver (`otlp`) listens on `4318` (http)
+2. exporter (`otlp/jaeger`) listens on `4317` (grpc)
+
+**Sample**
+
+- Create docker network
+
+    ```bash
+    docker network create tracing-network
+    ```
+
+- Run **Jaeger**
+
+    ```bash
+    docker run --rm \
+    --name jaeger \
+    --network tracing-network \
+    -p 16686:16686 \
+    -p 4317:4317 \
+    jaegertracing/all-in-one:1.67.0
+    ```
+
+- Run **OTLP Collector**
+
+    ```bash
+    docker run --rm \
+    --name otel-collector \
+    --network tracing-network \
+    -p 4318:4318 \
+    -p 55679:55679 \
+    -v $(pwd)/configs/otel-collector.yaml:/etc/otelcol-contrib/config.yaml \
+    otel/opentelemetry-collector-contrib:0.121.0
+    ```
 
 ## Demo
 
