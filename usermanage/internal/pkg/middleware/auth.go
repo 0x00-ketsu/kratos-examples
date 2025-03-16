@@ -4,9 +4,7 @@ import (
 	"context"
 	"strings"
 	"time"
-	userv1 "usermanage/gen/proto/api/user/v1"
 	"usermanage/internal/biz"
-	"usermanage/internal/pkg/auth"
 	"usermanage/internal/pkg/jwt"
 	"usermanage/internal/pkg/tracingx"
 
@@ -95,21 +93,6 @@ func JWTAuth(authUseCase *biz.AuthUseCase) middleware.Middleware {
 				}
 
 				return resp, err
-			}
-			return handler(ctx, req)
-		}
-	}
-}
-
-// RequireRole is a middleware that checks if the user has the required role.
-func RequireRole(roles ...userv1.UserRole) middleware.Middleware {
-	return func(handler middleware.Handler) middleware.Handler {
-		return func(ctx context.Context, req any) (any, error) {
-			md := map[string]string{"traceId": tracingx.GetTraceID(ctx)}
-			if err := auth.CheckRole(ctx, roles...); err != nil {
-				err := errors.Forbidden("INSUFFICIENT_PERMISSIONS", "Insufficient permissions").
-					WithMetadata(md)
-				return nil, err
 			}
 			return handler(ctx, req)
 		}

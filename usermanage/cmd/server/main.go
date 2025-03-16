@@ -61,7 +61,7 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
 
 func endUsername() log.Valuer {
 	return func(ctx context.Context) any {
-		return auth.CurrentUsername(ctx)
+		return auth.Username(ctx)
 	}
 }
 

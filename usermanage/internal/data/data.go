@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"usermanage/internal/data/model"
+	"usermanage/internal/pkg/constants"
 	"usermanage/internal/pkg/db"
 	"usermanage/internal/pkg/password"
 
@@ -68,7 +69,7 @@ func (d *Data) InitializeAdminAccount(ctx context.Context) error {
 	adminUser := &model.User{
 		Username: username,
 		Password: passwd,
-		Role:     model.UserRoleAdmin,
+		Role:     constants.UserRoleAdmin,
 	}
 
 	d.logger.Info("creating admin account")

@@ -114,7 +114,7 @@ func (s *AuthService) ChangePassword(ctx context.Context, req *authv1.ChangePass
 		return nil, err
 	}
 
-	username := auth.CurrentUsername(ctx)
+	username := auth.Username(ctx)
 	if username == "" {
 		logger.Errorw("msg", "failed to get current username")
 		err := errors.InternalServer("GET_CURRENT_USERNAME_FAILED", "Failed to get current username").

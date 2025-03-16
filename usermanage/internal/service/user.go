@@ -112,8 +112,8 @@ func (s *UserService) CreateUser(ctx context.Context, req *userv1.UserCreateRequ
 		Username: req.Username,
 		Role:     int32(req.Role),
 		Status:   int32(req.Status),
-		Creator:  auth.CurrentUsername(ctx),
-		UpdateBy: auth.CurrentUsername(ctx),
+		Creator:  auth.Username(ctx),
+		UpdateBy: auth.Username(ctx),
 	}
 	logger.Infow("msg", "create user", "params", params.String())
 	user, err := s.uc.CreateUser(ctx, params)
@@ -148,7 +148,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *userv1.UserUpdateRequ
 	}
 
 	params := biz.UserUpdateParams{
-		UpdatedBy: auth.CurrentUsername(ctx),
+		UpdatedBy: auth.Username(ctx),
 	}
 	for _, field := range req.UpdateMask.Paths {
 		switch field {
@@ -202,7 +202,7 @@ func (s *UserService) ReplaceUser(ctx context.Context, req *userv1.UserReplaceRe
 		Username:  req.Username,
 		Role:      int32(req.Role),
 		Status:    int32(req.Status),
-		UpdatedBy: auth.CurrentUsername(ctx),
+		UpdatedBy: auth.Username(ctx),
 	}
 	logger.Infow("msg", "replace user", "target_user.id", targetUserID, "params", params.String())
 	replacedUser, err := s.uc.ReplaceUser(ctx, targetUserID, params)

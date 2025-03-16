@@ -1,6 +1,7 @@
 package model
 
 import (
+	"usermanage/internal/pkg/constants"
 	"usermanage/internal/pkg/id"
 	"usermanage/internal/pkg/password"
 
@@ -10,10 +11,10 @@ import (
 // User represents the user entity.
 type User struct {
 	BaseModel
-	Username string     `json:"username" gorm:"index;size:64"`
-	Password string     `json:"password" gorm:"size:128"`
-	Role     UserRole   `json:"role"`
-	Status   UserStatus `json:"status"`
+	Username string             `json:"username" gorm:"index;size:64"`
+	Password string             `json:"password" gorm:"size:128"`
+	Role     constants.UserRole `json:"role"`
+	Status   constants.UserStatus         `json:"status"`
 	// MustChangePassword indicates if the user must change the password.
 	// The default value is `true`.
 	// MustChangePassword bool   `json:"mustChangePassword" gorm:"default:true"`
@@ -26,10 +27,10 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 	u.ID = id.GenerateUUID(true)
 	u.SetPassword(u.Password)
 	if !u.Role.IsValid() {
-		u.Role = DefaultUserRole
+		u.Role = constants.DefaultUserRole
 	}
 	if !u.Status.IsValid() {
-		u.Status = DefaultUserStatus
+		u.Status = constants.DefaultUserStatus
 	}
 	return
 }

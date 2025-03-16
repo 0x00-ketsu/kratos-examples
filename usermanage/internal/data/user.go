@@ -7,6 +7,7 @@ import (
 	"time"
 	"usermanage/internal/biz"
 	"usermanage/internal/data/model"
+	"usermanage/internal/pkg/constants"
 	"usermanage/internal/pkg/db"
 	"usermanage/internal/pkg/password"
 
@@ -152,8 +153,8 @@ func (r *userRepo) CreateUser(ctx context.Context, params biz.UserCreateParams) 
 	user := model.User{
 		Username:  username,
 		Password:  params.Password,
-		Role:      model.UserRole(params.Role),
-		Status:    model.UserStatus(params.Status),
+		Role:      constants.UserRole(params.Role),
+		Status:    constants.UserStatus(params.Status),
 		Creator:   params.Creator,
 		UpdatedBy: params.UpdateBy,
 	}
