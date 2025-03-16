@@ -24,9 +24,12 @@ services:
 
   jaeger:
     image: jaegertracing/all-in-one:1.67.0
+    container_name: jaeger-kratos
     ports:
       - "16686:16686"
       - "4317:4317"
+    networks:
+      - kratos
 
   usermanage:
     image: usermanage:latest

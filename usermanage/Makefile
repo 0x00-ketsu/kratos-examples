@@ -55,7 +55,7 @@ build:
 .PHONY: build-image
 # Build the docker image
 build-image:
-	docker build -t ${MODULE_PREFIX}:${VERSION} -f Dockerfile .
+	docker build --rm --force-rm -t ${MODULE_PREFIX}:${VERSION} -f Dockerfile .
 	docker tag $(MODULE_PREFIX):$(VERSION) $(MODULE_PREFIX):latest
 
 .PHONY: generate

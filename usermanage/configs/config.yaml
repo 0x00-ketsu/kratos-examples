@@ -21,7 +21,7 @@ server:
     output_to_console: false # true: console, false: collector
     otlp:
       insecure: true
-      grpc_endpoint: 127.0.0.1:4317
+      grpc_endpoint: jaeger:4317
 jwt:
   secret: inPRpgWvweLuK8cv5kIaN5#GIzCllcWa
   expire_seconds: 7200

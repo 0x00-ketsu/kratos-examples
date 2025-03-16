@@ -97,5 +97,5 @@ Visit the `jaeger` dashboard at `http://localhost:16686`.
 MODULE_PREFIX=usermanage make build-image
 
 # Run the application
-docker compose -f examples/docker-compose.yml up
+docker compose up -d
 ```
