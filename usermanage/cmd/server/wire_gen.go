@@ -7,6 +7,7 @@
 package main
 
 import (
+	"context"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"usermanage/gen/proto/conf"
@@ -41,7 +42,7 @@ func wireData(confData *conf.Data, logger log.Logger) (*data.Data, error) {
 }
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, error) {
+func wireApp(contextContext context.Context, confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, error) {
 	database, err := db.NewDatabase(confData)
 	if err != nil {
 		return nil, err
@@ -58,8 +59,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	userService := service.NewUserService(userUseCase, logger)
 	authUseCase := biz.NewAuthUseCase(userRepo, tokenRepo)
 	authService := service.NewAuthService(authUseCase, logger)
-	httpServer := server.NewHTTPServer(confServer, healthService, userService, authService, authUseCase, logger)
-	grpcServer := server.NewGRPCServer(confServer, healthService, userService, authService, authUseCase, logger)
+	httpServer := server.NewHTTPServer(contextContext, confServer, healthService, userService, authService, authUseCase, logger)
+	grpcServer := server.NewGRPCServer(contextContext, confServer, healthService, userService, authService, authUseCase, logger)
 	app := newApp(logger, httpServer, grpcServer)
 	return app, nil
 }

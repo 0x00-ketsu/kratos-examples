@@ -1,6 +1,3 @@
-metadata:
-  name: kratos-example
-  env: DEV
 log:
   file_path: /tmp/logs/kratos-example.log
   level: 0 # 0: debug, 1: info, 2: warn, 3: error
@@ -9,14 +6,22 @@ log:
   max_age: 15
   compress: false
 server:
-  # WARN: set to `false` in production
+  # WARNING: set to `false` in production
   debug: true
+  metadata:
+    name: kratos-usermanage
+    env: DEV
   http:
     addr: 0.0.0.0:8000
     timeout: 1s
   grpc:
     addr: 0.0.0.0:9000
     timeout: 1s
+  telemetry:
+    output_to_console: false # true: console, false: collector
+    otlp:
+      insecure: true
+      grpc_endpoint: 127.0.0.1:4317
 jwt:
   secret: inPRpgWvweLuK8cv5kIaN5#GIzCllcWa
   expire_seconds: 7200

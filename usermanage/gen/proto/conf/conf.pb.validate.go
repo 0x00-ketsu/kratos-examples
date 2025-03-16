@@ -57,46 +57,6 @@ func (m *Bootstrap) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetMetadata() == nil {
-		err := BootstrapValidationError{
-			field:  "Metadata",
-			reason: "value is required",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if all {
-		switch v := interface{}(m.GetMetadata()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, BootstrapValidationError{
-					field:  "Metadata",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, BootstrapValidationError{
-					field:  "Metadata",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetMetadata()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return BootstrapValidationError{
-				field:  "Metadata",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if m.GetServer() == nil {
 		err := BootstrapValidationError{
 			field:  "Server",
@@ -334,109 +294,6 @@ var _ interface {
 	ErrorName() string
 } = BootstrapValidationError{}
 
-// Validate checks the field values on Metadata with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *Metadata) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on Metadata with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in MetadataMultiError, or nil
-// if none found.
-func (m *Metadata) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *Metadata) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Name
-
-	// no validation rules for Env
-
-	if len(errors) > 0 {
-		return MetadataMultiError(errors)
-	}
-
-	return nil
-}
-
-// MetadataMultiError is an error wrapping multiple validation errors returned
-// by Metadata.ValidateAll() if the designated constraints aren't met.
-type MetadataMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m MetadataMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m MetadataMultiError) AllErrors() []error { return m }
-
-// MetadataValidationError is the validation error returned by
-// Metadata.Validate if the designated constraints aren't met.
-type MetadataValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e MetadataValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e MetadataValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e MetadataValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e MetadataValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e MetadataValidationError) ErrorName() string { return "MetadataValidationError" }
-
-// Error satisfies the builtin error interface
-func (e MetadataValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sMetadata.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = MetadataValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = MetadataValidationError{}
-
 // Validate checks the field values on Log with the rules defined in the proto
 // definition for this message. If any rules are violated, the first error
 // encountered is returned, or nil if there are no violations.
@@ -672,6 +529,46 @@ func (m *Server) validate(all bool) error {
 
 	// no validation rules for Debug
 
+	if m.GetMetadata() == nil {
+		err := ServerValidationError{
+			field:  "Metadata",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetMetadata()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ServerValidationError{
+					field:  "Metadata",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ServerValidationError{
+					field:  "Metadata",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetMetadata()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ServerValidationError{
+				field:  "Metadata",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if all {
 		switch v := interface{}(m.GetHttp()).(type) {
 		case interface{ ValidateAll() error }:
@@ -724,6 +621,35 @@ func (m *Server) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return ServerValidationError{
 				field:  "Grpc",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetTelemetry()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ServerValidationError{
+					field:  "Telemetry",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ServerValidationError{
+					field:  "Telemetry",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTelemetry()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ServerValidationError{
+				field:  "Telemetry",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -962,6 +888,112 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DataValidationError{}
+
+// Validate checks the field values on Server_Metadata with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *Server_Metadata) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Server_Metadata with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// Server_MetadataMultiError, or nil if none found.
+func (m *Server_Metadata) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Server_Metadata) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for Version
+
+	// no validation rules for Env
+
+	if len(errors) > 0 {
+		return Server_MetadataMultiError(errors)
+	}
+
+	return nil
+}
+
+// Server_MetadataMultiError is an error wrapping multiple validation errors
+// returned by Server_Metadata.ValidateAll() if the designated constraints
+// aren't met.
+type Server_MetadataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m Server_MetadataMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m Server_MetadataMultiError) AllErrors() []error { return m }
+
+// Server_MetadataValidationError is the validation error returned by
+// Server_Metadata.Validate if the designated constraints aren't met.
+type Server_MetadataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e Server_MetadataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e Server_MetadataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e Server_MetadataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e Server_MetadataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e Server_MetadataValidationError) ErrorName() string { return "Server_MetadataValidationError" }
+
+// Error satisfies the builtin error interface
+func (e Server_MetadataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sServer_Metadata.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = Server_MetadataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = Server_MetadataValidationError{}
 
 // Validate checks the field values on Server_HTTP with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -1226,6 +1258,240 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = Server_GRPCValidationError{}
+
+// Validate checks the field values on Server_OTLP with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Server_OTLP) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Server_OTLP with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in Server_OTLPMultiError, or
+// nil if none found.
+func (m *Server_OTLP) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Server_OTLP) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Insecure
+
+	// no validation rules for GrpcEndpoint
+
+	if len(errors) > 0 {
+		return Server_OTLPMultiError(errors)
+	}
+
+	return nil
+}
+
+// Server_OTLPMultiError is an error wrapping multiple validation errors
+// returned by Server_OTLP.ValidateAll() if the designated constraints aren't met.
+type Server_OTLPMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m Server_OTLPMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m Server_OTLPMultiError) AllErrors() []error { return m }
+
+// Server_OTLPValidationError is the validation error returned by
+// Server_OTLP.Validate if the designated constraints aren't met.
+type Server_OTLPValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e Server_OTLPValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e Server_OTLPValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e Server_OTLPValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e Server_OTLPValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e Server_OTLPValidationError) ErrorName() string { return "Server_OTLPValidationError" }
+
+// Error satisfies the builtin error interface
+func (e Server_OTLPValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sServer_OTLP.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = Server_OTLPValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = Server_OTLPValidationError{}
+
+// Validate checks the field values on Server_Telemetry with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *Server_Telemetry) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Server_Telemetry with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// Server_TelemetryMultiError, or nil if none found.
+func (m *Server_Telemetry) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Server_Telemetry) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for OutputToConsole
+
+	if all {
+		switch v := interface{}(m.GetOtlp()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, Server_TelemetryValidationError{
+					field:  "Otlp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, Server_TelemetryValidationError{
+					field:  "Otlp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetOtlp()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return Server_TelemetryValidationError{
+				field:  "Otlp",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return Server_TelemetryMultiError(errors)
+	}
+
+	return nil
+}
+
+// Server_TelemetryMultiError is an error wrapping multiple validation errors
+// returned by Server_Telemetry.ValidateAll() if the designated constraints
+// aren't met.
+type Server_TelemetryMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m Server_TelemetryMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m Server_TelemetryMultiError) AllErrors() []error { return m }
+
+// Server_TelemetryValidationError is the validation error returned by
+// Server_Telemetry.Validate if the designated constraints aren't met.
+type Server_TelemetryValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e Server_TelemetryValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e Server_TelemetryValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e Server_TelemetryValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e Server_TelemetryValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e Server_TelemetryValidationError) ErrorName() string { return "Server_TelemetryValidationError" }
+
+// Error satisfies the builtin error interface
+func (e Server_TelemetryValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sServer_Telemetry.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = Server_TelemetryValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = Server_TelemetryValidationError{}
 
 // Validate checks the field values on Data_Database with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

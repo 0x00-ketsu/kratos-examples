@@ -6,6 +6,7 @@
 package main
 
 import (
+	"context"
 	"usermanage/gen/proto/conf"
 	"usermanage/internal/biz"
 	"usermanage/internal/data"
@@ -24,7 +25,7 @@ func wireData(*conf.Data, log.Logger) (*data.Data, error) {
 }
 
 // wireApp init kratos application.
-func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, error) {
+func wireApp(context.Context, *conf.Server, *conf.Data, log.Logger) (*kratos.App, error) {
 	panic(
 		wire.Build(
 			server.ProviderSet,

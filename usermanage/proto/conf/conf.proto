@@ -23,24 +23,10 @@ enum LogLevel {
 // protolint:enable ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH
 
 message Bootstrap {
-  Metadata metadata = 1 [(validate.rules).message.required = true];
   Server server = 2 [(validate.rules).message.required = true];
   Data data = 3 [(validate.rules).message.required = true];
   Log log = 4 [(validate.rules).message.required = true];
   Jwt jwt = 5 [(validate.rules).message.required = true];
-}
-
-message Metadata {
-  // protolint:disable ENUM_FIELD_NAMES_PREFIX
-  enum Environment {
-    UNSPECIFIED = 0;
-    DEV = 1;
-    STAG = 2;
-    PROD = 3;
-  }
-  // protolint:enable ENUM_FIELD_NAMES_PREFIX
-  string name = 1;
-  Environment env = 2;
 }
 
 message Log {
@@ -58,6 +44,19 @@ message Jwt {
 }
 
 message Server {
+  message Metadata {
+    // protolint:disable ENUM_FIELD_NAMES_PREFIX
+    enum Environment {
+      UNSPECIFIED = 0;
+      DEV = 1;
+      STAG = 2;
+      PROD = 3;
+    }
+    // protolint:enable ENUM_FIELD_NAMES_PREFIX
+    string name = 1;
+    string version = 2;
+    Environment env = 3;
+  }
   message HTTP {
     string network = 1;
     string addr = 2;
@@ -68,9 +67,19 @@ message Server {
     string addr = 2;
     google.protobuf.Duration timeout = 3;
   }
+  message OTLP {
+    bool insecure = 1;
+    string grpc_endpoint = 2;
+  }
+  message Telemetry {
+    bool output_to_console = 1; // true: console, false: collector
+    OTLP otlp = 2;
+  }
   bool debug = 1;
-  HTTP http = 2;
-  GRPC grpc = 3;
+  Metadata metadata = 2 [(validate.rules).message.required = true];
+  HTTP http = 3;
+  GRPC grpc = 4;
+  Telemetry telemetry = 5;
 }
 
 message Data {

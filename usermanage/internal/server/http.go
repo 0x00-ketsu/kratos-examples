@@ -1,8 +1,7 @@
 package server
 
 import (
-	"fmt"
-	"io"
+	"context"
 	authv1 "usermanage/gen/proto/api/auth/v1"
 	healthv1 "usermanage/gen/proto/api/health/v1"
 	userv1 "usermanage/gen/proto/api/user/v1"
@@ -15,14 +14,11 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
-	"go.opentelemetry.io/otel/sdk/resource"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
-	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
 
 // NewHTTPServer new an HTTP server.
 func NewHTTPServer(
+	ctx context.Context,
 	c *conf.Server,
 	health *service.HealthService,
 	user *service.UserService,
@@ -30,21 +26,14 @@ func NewHTTPServer(
 	authUseCase *biz.AuthUseCase,
 	logger log.Logger,
 ) *http.Server {
-	// TODO: change stdout to file or others
-	exporter, err := stdouttrace.New(stdouttrace.WithWriter(io.Discard))
-	if err != nil {
-		fmt.Printf("creating stdout exporter: %v", err)
+	if err := initTracer(ctx, c); err != nil {
 		panic(err)
 	}
-	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithBatcher(exporter),
-		sdktrace.WithResource(resource.NewSchemaless(
-			semconv.ServiceNameKey.String(Name)),
-		))
+
 	opts := []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
-			tracing.Server(tracing.WithTracerProvider(tp)),
+			tracing.Server(),
 			middleware.Logging(logger, generateMaskedOperations(c)...),
 			middleware.JWTAuth(authUseCase),
 		),

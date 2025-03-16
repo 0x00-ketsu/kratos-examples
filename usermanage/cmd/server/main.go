@@ -99,6 +99,9 @@ func newLogger(c *conf.Log) log.Logger {
 func main() {
 	flag.Parse()
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
@@ -114,6 +117,7 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
+	bc.Server.Metadata.Version = Version
 
 	logger := newLogger(bc.Log)
 
@@ -137,7 +141,6 @@ func main() {
 	}
 
 	defer data.Cleanup()
-	ctx := context.Background()
 	if err := data.Migrate(); err != nil {
 		panic(err)
 	}
@@ -147,7 +150,7 @@ func main() {
 	}
 
 	// Initialize app
-	app, err := wireApp(bc.Server, bc.Data, logger)
+	app, err := wireApp(ctx, bc.Server, bc.Data, logger)
 	if err != nil {
 		panic(err)
 	}

@@ -1,6 +1,5 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
-NAME=kratos-example
 VERSION=$(shell git describe --tags --always)
 
 ifeq ($(GOHOSTOS), windows)
@@ -51,7 +50,7 @@ init:
 build:
 	go mod tidy
 	rm -rf ./build
-	CGO_ENABLED=0 go build -ldflags="-s -w -X main.Name=$(NAME) -X main.Version=$(VERSION)" -o ./build/ ./...
+	CGO_ENABLED=0 go build -ldflags="-s -w -X main.Version=$(VERSION)" -o ./build/ ./...
 
 .PHONY: build-image
 # Build the docker image

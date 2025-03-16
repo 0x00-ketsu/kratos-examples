@@ -39,6 +39,11 @@ Use `JWT` to authenticate the user.
 - `buf`
 - `wire`
 - `kratos` v2.x
+- `MySQL` or `PostgreSQL`
+- `Redis`
+- `Opentelemetry` (optional)
+    - `jaeger`
+- `docker` and `docker-compose` (for demo)
 
 ## Initialize
 
@@ -59,6 +64,22 @@ make build
 ```bash
 MODULE_PREFIX=usermanage make build-image
 ```
+
+## Opentelemetry
+
+### Jaeger
+
+Start the `jaeger` with docker.
+
+```bash
+docker run -d \
+  --name jaeger \
+  -p 16686:16686 \
+  -p 4317:4317 \
+  jaegertracing/all-in-one:1.67.0
+```
+
+Visit the `jaeger` dashboard at `http://localhost:16686`.
 
 ## Demo
 
