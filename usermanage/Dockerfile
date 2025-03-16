@@ -23,5 +23,5 @@ WORKDIR /app
 EXPOSE 8000
 EXPOSE 9000
 
-ENTRYPOINT ["./user"]
+ENTRYPOINT ["./server"]
 CMD ["-conf", "./configs"]

@@ -67,6 +67,8 @@ MODULE_PREFIX=usermanage make build-image
 
 ## Opentelemetry
 
+To output the telemetry to console, in the `config.yaml` file, set `telemetry.output_to_console` to `true`.
+
 ### Jaeger
 
 Start the `jaeger` with docker.
