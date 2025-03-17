@@ -31,6 +31,8 @@ var (
 	// flagconf is the config flag.
 	flagconf string
 
+	bc conf.Bootstrap
+
 	id, _ = os.Hostname()
 
 	logSensitiveKeys = []string{"password", "passwd", "pwd", "token", "access_token", "refresh_token", "secret"}
@@ -43,6 +45,26 @@ var (
 
 func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
+}
+
+func loadConfig() {
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
+
+	// Assign the Name and the Version
+	Name = bc.Server.Metadata.Name
+	bc.Server.Metadata.Version = Version
 }
 
 func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
@@ -99,27 +121,10 @@ func newLogger(c *conf.Log) log.Logger {
 func main() {
 	flag.Parse()
 
+	loadConfig()
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
-
-	if err := c.Load(); err != nil {
-		panic(err)
-	}
-
-	var bc conf.Bootstrap
-	if err := c.Scan(&bc); err != nil {
-		panic(err)
-	}
-	bc.Server.Metadata.Version = Version
-
-	logger := newLogger(bc.Log)
 
 	// Initialize JWT with configuration or fallback to defaults
 	jwtKey := defaultJWTKey
@@ -133,6 +138,8 @@ func main() {
 		}
 	}
 	jwt.Initialize(jwtKey, tokenDuration)
+
+	logger := newLogger(bc.Log)
 
 	// Initialize data
 	data, err := wireData(bc.Data, logger)
