@@ -1,66 +1,45 @@
-run:
-  timeout: 3m
-
+version: "2"
 linters:
-  disable-all: true
-
-  # Enable specific linter
-  # https://golangci-lint.run/usage/linters/#enabled-by-default
+  default: all
   enable:
-    # go install github.com/mgechev/revive@latest
-    - revive
     - errcheck
-    - gosimple
-
-  disable:
-    - typecheck
-    - unused
-    - staticcheck
-    - ineffassign
-    - govet
-    - unparam
-    - mnd
-
+    - revive
+  settings:
+    revive:
+      max-open-files: 100
+      rules:
+        - name: package-comments
+          disabled: true
+        - name: line-length-limit
+          arguments:
+            - 100
+          disabled: true
+        - name: blank-imports
+        - name: confusing-naming
+        - name: confusing-results
+        - name: context-as-argument
+          arguments:
+            - allowTypesBefore: '*testing.T,*github.com/user/repo/testing.Harness'
+        - name: context-keys-type
+        - name: defer
+        - name: early-return
+        - name: empty-block
+        - name: empty-lines
+        - name: error-naming
+        - name: error-return
+        - name: error-strings
+        - name: errorf
+        - name: identical-branches
+        - name: if-return
+        - name: increment-decrement
+        - name: indent-error-flow
+        - name: redefines-builtin-id
+        - name: receiver-naming
+        - name: unexported-naming
+        - name: unexported-return
+        - name: unreachable-code
+        - name: unused-parameter
+        - name: superfluous-else
+        - name: time-equal
 issues:
-  # Maximum count of issues with the same text.
-  # Set to 0 to disable.
-  # Default: 3
   max-same-issues: 50
-
-linters-settings:
-  # https://golangci-lint.run/usage/linters/#revive
-  revive:
-    max-open-files: 100
-    rules:
-      - name: package-comments
-        disabled: true
-      - name: line-length-limit
-        disabled: true
-        arguments: [100]
-      - name: blank-imports
-      - name: confusing-naming
-      - name: confusing-results
-      - name: context-as-argument
-        arguments:
-          - allowTypesBefore: '*testing.T,*github.com/user/repo/testing.Harness'
-      - name: context-keys-type
-      - name: defer
-      - name: early-return
-      - name: empty-block
-      - name: empty-lines
-      - name: error-naming
-      - name: error-return
-      - name: error-strings
-      - name: errorf
-      - name: identical-branches
-      - name: if-return
-      - name: increment-decrement
-      - name: indent-error-flow
-      - name: redefines-builtin-id
-      - name: receiver-naming
-      - name: unexported-naming
-      - name: unexported-return
-      - name: unreachable-code
-      - name: unused-parameter
-      - name: superfluous-else
-      - name: time-equal
