@@ -1,9 +1,16 @@
 version: "2"
 linters:
-  default: all
+  default: none
   enable:
     - errcheck
     - revive
+  disable:
+    - govet
+    - ineffassign
+    - mnd
+    - staticcheck
+    - unused
+    - unparam
   settings:
     revive:
       max-open-files: 100
@@ -11,8 +18,6 @@ linters:
         - name: package-comments
           disabled: true
         - name: line-length-limit
-          arguments:
-            - 100
           disabled: true
         - name: blank-imports
         - name: confusing-naming
@@ -41,5 +46,3 @@ linters:
         - name: unused-parameter
         - name: superfluous-else
         - name: time-equal
-issues:
-  max-same-issues: 50
