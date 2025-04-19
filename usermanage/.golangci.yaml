@@ -4,13 +4,6 @@ linters:
   enable:
     - errcheck
     - revive
-  disable:
-    - govet
-    - ineffassign
-    - mnd
-    - staticcheck
-    - unused
-    - unparam
   settings:
     revive:
       max-open-files: 100
